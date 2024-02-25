@@ -1,6 +1,8 @@
 #SingleInstance,Force
 #Persistent
 isEditingHotKey = 0
+Run, "RemoteDesktopDaemon.exe"
+Menu, Tray, Icon, record.ico
 Menu, Tray, NoDefault
 Menu, Tray, NoStandard
 Menu, Tray, Add, E&xit, GuiClose
@@ -8,14 +10,12 @@ Goto, ShowForm
 
 
 ShowForm:
-	RegRead, InstallLocation, HKEY_CURRENT_USER, SOFTWARE\RemoteDesktopRecorder,
 	isEditingHotKey = 0
 	Filenames :=
 	Gui, Add, GroupBox, x16 y104 w420 h110 , Select the type of Script To Record
 	Gui, Add, GroupBox, x226 y124 w-40 h-40 , Editor options
 	Gui, Add, Button, x306 y154 w120 h40 , Begin Recording
-	IfExist, %InstallLocation%\RemoteDesktopRecorderLogo.gif
-		Gui, Add, Picture, x16 y4 w420 h90 , %InstallLocation%\RemoteDesktopRecorderLogo.gif
+	Gui, Add, Picture, x16 y4 w420 h90 , RemoteDesktopRecorderLogo.gif
 	Gui, Add, Text, x26 y124 w80 h20 , Name of Script
 	Gui, Add, Text, x26 y234 w80 h20 , Name of Script
 	Gui, Add, Edit, x106 y124 w320 h20 vNameScript, Script %A_MM%-%A_DD%-%A_YYYY% %A_Hour%-%A_Min%

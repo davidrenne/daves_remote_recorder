@@ -6,6 +6,7 @@ Menu, Tray, NoDefault
 Menu, Tray, NoStandard
 Menu, Tray, Add, S&tart Recording, StartRecordingLabel
 Menu, Tray, Add, E&xit, GuiClose
+Menu, Tray, Icon, record.ico
 Loop, %A_ScriptDir%\RecordedScripts\*rdr
 {
 	theFile = %A_LoopFileFullPath%
@@ -31,10 +32,6 @@ RunHotKey:
 	if (theKeyKeyPressed <> "") {
 		IniRead, ScriptSelection, Recorder.ini, script_name_by_hotkey, %A_ThisHotkey%
 		if (ScriptSelection <> "ERROR" And ScriptSelection <> "Unassigned") {
-					
-			MsgBox, 1, , Now Executing "%ScriptSelection%"...Press OK To Continue
-			IfMsgBox No
-				return
 				
 			if InStr(ScriptSelection, "exe") {
 				Run, %A_ScriptDir%\RecordedScripts\%ScriptSelection%

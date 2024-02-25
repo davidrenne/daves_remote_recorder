@@ -4,6 +4,7 @@
 SetTitleMatchMode 2
 StringReplace, endrecord, record, }, %A_Space%Down}
 StringLen, length, endrecord
+Menu, Tray, Icon, record.ico
 
 
 
@@ -510,7 +511,7 @@ Start:
 		
 		if (scriptNameOriginal <> "")
 		{
-			ButtonSelected:=CMsgbox("","Minimize Desktop?","Minimize Desktop?  Or Begin recording on current window?",77,"Stay On Window|Minimize To Desktop",Options,GUIOptions,IconOptions)
+			ButtonSelected:=CMsgbox("Minimize Desktop?","Minimize Desktop?  Or Begin recording on current window?","Stay On Window|Minimize To Desktop", 350, 100)
 			if (ButtonSelected == "Minimize Desktop") 
 			{
 				Mouse_data :=
@@ -567,8 +568,7 @@ ShowGUI2: ; Creates little STOP button in upper left hand corner
 	Gui, +AlwaysOnTop -SysMenu +Owner -Border
 	;Gui, Color, EEAA99
 	WinSet, TransColor, EEAA99
-	halfScreen := A_ScreenWidth / 2
-	Gui, Show, x%halfScreen% y0 NoActivate NA, ASWv02
+	Gui, Show, x400 y0 NoActivate NA, ASWv02
 	if (Title <> "") 
 	{
 		WinActivate , %Title%
@@ -629,9 +629,9 @@ DoneRecording:
 	} 
 	else 
 	{
-		Buttons:="*Replay|Discard Recording"
+		Buttons:="*Just Save It|Replay|Discard Recording"
 	}
-	ButtonSelected:=CMsgbox("","Recording Complete!",Text,69,Buttons,Options,GUIOptions,IconOptions)
+	ButtonSelected:=CMsgbox("Recording Complete!",Text,Buttons, 350, 100)
 	if (ButtonSelected == "Replay" Or ButtonSelected == "Replay Again") 
 	{
 		isRePlaying = 1
@@ -665,15 +665,6 @@ DoneRecording:
 Return
 
 whatsNext:
-;~ 	ButtonSelected:=CMsgbox("","What would you like to do next?","What would you like to do next?",77,"Record Another Script|Quit UDC Remote Desktop",Options,GUIOptions,IconOptions)
-;~ 	if (ButtonSelected == "Quit UDC Remote Desktop") {
-;~ 		ExitApp
-;~ 	}
-
-;~ 	if (ButtonSelected == "Record Another Script") {
-;~ 		Run, StartRecording.exe
-;~ 		ExitApp
-;~ 	}
 	Run, StartRecording.exe
 	ExitApp
 Return
@@ -723,7 +714,7 @@ Replay:
 	if (recording == 0 && playback == 0) 
 	{
 		playback = 1
-		TrayTip, RemoteDesktop, Remote Desktop Recorder is playing back script %scriptName%
+		TrayTip, RemoteDesktop, Remote Desktop Recorder is playing back script %scriptName% press F8 to stop
 		StringReplace, Mouse_data_Tmp, Mouse_moves, `n, @, All
 		StringSplit, Mouse_data_, Mouse_data_Tmp , @
 		Loop, %Mouse_data_0%
@@ -754,6 +745,21 @@ Return
 ;***********************************
 
 ReplayScript:
+
+    ; Check if F8 is pressed to stop the script
+    if GetKeyState("F8", "P")
+    {
+        SetTimer ReplayScript, Off
+        SetTimer MaximizeWindows, Off
+        SetTimer ReplayWindowFocus, Off
+        If (isRePlaying == 1) 
+        {
+            Gosub, DoneRecording
+        }
+        playback = 0
+        TrayTip, RemoteDesktop, Stopped playback via F8 keypress
+        Return
+    }
 	Time_Index := A_TickCount - Time_old
 	Mouse_data_%Data_Index%_9 += 0
 
